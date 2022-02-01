@@ -1,29 +1,35 @@
-import React, { useState } from "react";
-import AccordionStyles from './AccordionStyles'
+import React, { useState } from 'react';
+import AccordionStyles from './AccordionStyles';
+import dateBuilderAccordion from './DateBuilderAccordion';
 
-function Accordion(props) {
+function Accordion({ weatherDataPerDay }) {
   const [isOpen, setOpen] = useState(false);
+  console.log(weatherDataPerDay);
+
+  const today = dateBuilderAccordion(new Date(weatherDataPerDay.dt * 1000));
+  const src = `https://openweathermap.org/img/wn/${weatherDataPerDay.weather[0].icon}.png`;
   return (
     <AccordionStyles className="accordion_wrapper">
       <div
-        className={`accordion_title ${isOpen ? "open" : ""}`}
+        className={`accordion_title ${isOpen ? 'open' : ''}`}
         onClick={() => setOpen(!isOpen)}
       >
-        <span>{props.today}</span>
-        
-          <div className="forecast_icon"><img src={props.src} /></div>
-          <span>
-          {props.min_temp}/{props.max_temp}°C
+        <span>{today}</span>
+
+        <div className="forecast_icon">
+          <img src={src} />
+        </div>
+        <span>
+          {Math.round(weatherDataPerDay.temp.min)}/
+          {Math.round(weatherDataPerDay.temp.max)}°C
         </span>
       </div>
-      <div className={`accordion_item ${!isOpen ? "collapsed" : ""}`}>
+      <div className={`accordion_item ${!isOpen ? 'collapsed' : ''}`}>
         <div className="accordion_content">
-         
-          <span>Morning {props.morning_temp}°C</span>
-          <span>Afternoon {props.afternoon_temp}°C</span>
-          <span>Evening {props.evening_temp}°C</span>
-          <span>Night {props.night_temp}°C</span>
-          
+          <span>Morning {Math.round(weatherDataPerDay.temp.morn)}°C</span>
+          <span>Afternoon {Math.round(weatherDataPerDay.temp.day)}°C</span>
+          <span>Evening {Math.round(weatherDataPerDay.temp.eve)}°C</span>
+          <span>Night {Math.round(weatherDataPerDay.temp.night)}°C</span>
         </div>
       </div>
     </AccordionStyles>

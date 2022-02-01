@@ -1,20 +1,23 @@
-import CurrentWeatherStyles from "./CurrentWeatherStyles";
-import dateBuilder from "./DateBuilder";
-import React, { useState, useEffect } from "react";
-import { API_KEY, API_BASE_URL } from "../apis/config";
+import CurrentWeatherStyles from './CurrentWeatherStyles';
+import dateBuilder from './DateBuilder';
+import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../apis/config';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function CurrentWeather({ weatherDetails, setWeatherDetails }) {
+  const API_KEY = process.env.REACT_APP_API_KEY;
+
   const [query, setQuery] = useState();
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState('');
 
   const [error, setError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
 
   const [weather, setWeather] = useState({});
   const [weatherActive, setWeatherActive] = useState(false);
 
   const handleSearch = (evt) => {
-    if (evt.key !== "Enter") return;
+    if (evt.key !== 'Enter') return;
     setQuery(input);
   };
 
@@ -45,20 +48,19 @@ export default function CurrentWeather({ weatherDetails, setWeatherDetails }) {
         const response = await fetch(
           `${API_BASE_URL}weather?q=${query}&units=metric&APPID=${API_KEY}`
         );
-        // console.log("RESPONSE DATA", response);
 
         if (response.status === 404) {
           const errorCode = `City: ${query} ${response.statusText}`;
           setError(true);
           setErrorMessage(errorCode);
-          // console.log("ERROR", errorCode);
+
           return;
         }
 
         const data = await response.json();
-        
+
         setWeather(data);
-        setError(false)
+        setError(false);
         setWeatherActive(true);
       } catch (error) {}
     };
@@ -74,7 +76,7 @@ export default function CurrentWeather({ weatherDetails, setWeatherDetails }) {
 
       try {
         const response = await fetch(
-          `${API_BASE_URL}onecall?lat=${lat}&lon=${lon}&exclude=${`minutely,hourly,alerts`}&appid=${API_KEY}`
+          `${API_BASE_URL}onecall?lat=${lat}&lon=${lon}&exclude=minutely,hourly,alerts&units=metric&appid=${API_KEY}`
         );
         const result = await response.json();
         setWeatherDetails(result);
@@ -91,12 +93,9 @@ export default function CurrentWeather({ weatherDetails, setWeatherDetails }) {
     <CurrentWeatherStyles>
       <div
         className={
-          weather?.main?.temp > 16 ? "weather_container warm" : "weather_container"
-          // typeof weather.main != "undefined"
-          //   ? weather.main.temp > 16
-          //     ? "weather_container warm"
-          //     : "weather_container"
-          //   : "weather_container"
+          weather?.main?.temp > 16
+            ? 'weather_container warm'
+            : 'weather_container'
         }
       >
         <input
@@ -111,8 +110,7 @@ export default function CurrentWeather({ weatherDetails, setWeatherDetails }) {
           <div className="error_message">{errorMessage}</div>
         ) : (
           <React.Fragment>
-          
-            {typeof weather.main != "undefined" ? (
+            {typeof weather.main != 'undefined' ? (
               <div>
                 <div className="location_box">
                   <div className="location">
@@ -142,9 +140,8 @@ export default function CurrentWeather({ weatherDetails, setWeatherDetails }) {
                 </div>
               </div>
             ) : (
-              ""
+              ''
             )}
-            
           </React.Fragment>
         )}
       </div>
